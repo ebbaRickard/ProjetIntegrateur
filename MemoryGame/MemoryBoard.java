@@ -2,9 +2,14 @@ package MemoryGame;
 
 import java.io.File;
 
+// class should return an image of the board consisting of size x size memory bricks
+// takes the board size as input
+// keeps track of the status of the board (flipped cards, pairs already made)
+
 public class MemoryBoard {
 
     private MemoryImage[][] board;
+    private boolean[][] boardStatus;
     private int size;
 
     public MemoryBoard(int size, String fileDirectoryName) {
@@ -55,6 +60,14 @@ public class MemoryBoard {
 
     public MemoryImage getCard(int r, int c) {
         return board[r][c];
+    }
+
+    public void flipCard(int r, int c) {
+        boardStatus[r][c] = !boardStatus[r][c];
+    }
+
+    public boolean isFlipped(int r, int c) {
+        return boardStatus[r][c];
     }
 
 }
