@@ -1,6 +1,7 @@
-package MemoryGame;
+package MemoryGame.model;
 
 import java.io.File;
+
 
 // class should return an image of the board consisting of size x size memory bricks
 // takes the board size as input
@@ -9,13 +10,20 @@ import java.io.File;
 public class MemoryBoard {
 
     private MemoryImage[][] board;
+    private MemoryImage background;
     private boolean[][] boardStatus;
     private int size;
 
     public MemoryBoard(int size, String fileDirectoryName) {
         this.size = size;
         board = new MemoryImage[size][size];
+        boardStatus = new boolean[size][size];
+        boardStatus[0][0] = true;
+        boardStatus[0][1] = true;
+        boardStatus[1][1] = true;
         addImages(fileDirectoryName);
+        background = new MemoryImage("/Users/ebbarickard/2021:2022/INSA/Projet integrateur/MemoryGame/model/background.png");
+        
     }
 
     private void addImages(String fileDirectoryName) {
@@ -60,6 +68,10 @@ public class MemoryBoard {
 
     public MemoryImage getCard(int r, int c) {
         return board[r][c];
+    }
+
+    public MemoryImage getBackGround() {
+        return background;
     }
 
     public void flipCard(int r, int c) {

@@ -1,4 +1,4 @@
-package MemoryGame;
+package MemoryGame.model;
 
 import javax.imageio.ImageIO;
 
