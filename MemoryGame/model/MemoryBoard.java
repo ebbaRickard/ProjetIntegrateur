@@ -2,7 +2,6 @@ package MemoryGame.model;
 
 import java.io.File;
 
-
 // class should return an image of the board consisting of size x size memory bricks
 // takes the board size as input
 // keeps track of the status of the board (flipped cards, pairs already made)
@@ -10,20 +9,24 @@ import java.io.File;
 public class MemoryBoard {
 
     private MemoryImage[][] board;
+    private String[][] labels;
     private MemoryImage background;
     private boolean[][] boardStatus;
     private int size;
 
-    public MemoryBoard(int size, String fileDirectoryName) {
+    public MemoryBoard(int size, String fileDirectoryName, String backgroundImageFileName) {
         this.size = size;
+
         board = new MemoryImage[size][size];
         boardStatus = new boolean[size][size];
+        labels = new String[size][size];
+
         boardStatus[0][0] = true;
         boardStatus[0][1] = true;
         boardStatus[1][1] = true;
         addImages(fileDirectoryName);
-        background = new MemoryImage("/Users/ebbarickard/2021:2022/INSA/Projet integrateur/MemoryGame/model/background.png");
-        
+        background = new MemoryImage(backgroundImageFileName);
+
     }
 
     private void addImages(String fileDirectoryName) {
@@ -37,6 +40,7 @@ public class MemoryBoard {
                         System.out.println(file.getPath());
                         MemoryImage img = new MemoryImage(file.getPath());
                         board[r][c] = img;
+                        labels[r][c] = findLabel(file.getName());
 
                         if (r < size - 1) {
                             r++;
@@ -51,6 +55,10 @@ public class MemoryBoard {
             }
 
         }
+    }
+
+    private String findLabel(String filepath) {
+        return filepath.split("_")[0];
     }
 
     private boolean isImage(String fileName) {
@@ -80,6 +88,10 @@ public class MemoryBoard {
 
     public boolean isFlipped(int r, int c) {
         return boardStatus[r][c];
+    }
+
+    public boolean isPair(int r1, int c1, int r2, int c2) {
+        return labels[r1][c1].equals(labels[r2][c2]);
     }
 
 }
