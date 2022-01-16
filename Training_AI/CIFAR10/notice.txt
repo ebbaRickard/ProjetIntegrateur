@@ -1,0 +1,11 @@
+You have to download CIFAR10 dataset and put it into the same directory as the jupyter-notebook.
+CIFAR10 dataset :
+batches.meta
+data_batch_1
+data_batch_2
+data_batch_3
+data_batch_4
+data_batch_5
+test_batch
+
+you can download it here : https://www.cs.toronto.edu/~kriz/cifar.html

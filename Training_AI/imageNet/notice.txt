@@ -1,0 +1,14 @@
+To extract image from imageNet, you have to put several image into named directories (ie label of each image inside) into imageNet directory
+
+link to download a small part of imageNet : https://www.kaggle.com/ifigotin/imagenetmini-1000
+Our subset of imagenet : https://drive.google.com/drive/folders/1909bTvm3hpK_EtKecgUQm3k85FnaITsW?usp=sharing
+
+Example :
+imageNet/
+	Cheetah/
+		picture1.jpeg
+		...
+	Apple/
+		picture2.jpeg
+		...
+	...	
