@@ -1,0 +1,45 @@
+# Download our subset of imageNet
+Our subset of imagenet : https://drive.google.com/drive/folders/1909bTvm3hpK_EtKecgUQm3k85FnaITsW?usp=sharing
+
+# OR create your own imagenet dataset
+link to download a small part of imageNet : https://www.kaggle.com/ifigotin/imagenetmini-1000
+Example :
+imageNet/
+	Cheetah/
+		picture1.jpeg
+		...
+	Apple/
+		picture2.jpeg
+		...
+	...	
+
+
+# Requirement installation
+conda create -n "memoryAI"
+conda activate memoryAI
+conda install python==3.9
+pip install -r API_Classification/requirement.txt
+
+# Start classification API
+# Launch the classification API	
+python3 API_Classification/main.py
+# Test it 
+python3 API/Classification/test.py
+
+# Start detection API
+Not done
+
+# Start the game 
+Not done
+
+# Start the ai
+# Open a jupyter-notebook (recommended) or a python terminal with the correct environnments (ie memoryAI)
+# Example of jupyter-notebook run_ai.ipynb
+>> import mainAI
+>> number_of_image = 10
+>> ai = mainAI.Main_AI(number_of_image) 
+>> ai.run()
+
+
+
+# Tested on Ubuntu18.04
