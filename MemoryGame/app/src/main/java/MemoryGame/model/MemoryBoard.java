@@ -23,7 +23,10 @@ public class MemoryBoard {
 
         boardStatus[0][0] = true;
         boardStatus[0][1] = true;
+        boardStatus[0][2] = true;
         boardStatus[1][1] = true;
+        boardStatus[2][2] = true;
+
         addImages(fileDirectoryName);
         background = new MemoryImage(backgroundImageFileName);
 
@@ -34,26 +37,34 @@ public class MemoryBoard {
         if (fileDirectory.isDirectory()) {
             int r = 0;
             int c = 0;
+            int count = 0;
             while (r < size - 1 && c < size - 1) {
-                for (File file : fileDirectory.listFiles()) {
-                    if (isImage(file.getName())) {
-                        System.out.println(file.getPath());
-                        MemoryImage img = new MemoryImage(file.getPath());
-                        board[r][c] = img;
-                        labels[r][c] = findLabel(file.getName());
+                for (File folder : fileDirectory.listFiles()) {
+                        for (File file : folder.listFiles()) {
+                            if (isImage(file.getName())) {
+                                
+                                if (count == 2) {
+                                    count = 0;
+                                    break;
+                                }
+                                System.out.println(file.getPath());
+                                MemoryImage img = new MemoryImage(file.getPath());
+                                board[r][c] = img;
+                                labels[r][c] = findLabel(file.getName());
 
-                        if (r < size - 1) {
-                            r++;
-                        } else if (c < size - 1) {
-                            r = 0;
-                            c++;
+                                if (r < size - 1) {
+                                    r++;
+                                } else if (c < size - 1) {
+                                    r = 0;
+                                    c++;
+                                }
+                                count++;
+                            
                         }
-                        System.out.println(r);
-                        System.out.println(c);
                     }
                 }
-            }
 
+            }
         }
     }
 
@@ -67,7 +78,7 @@ public class MemoryBoard {
         if (i > 0) {
             extension = fileName.substring(i + 1);
         }
-        return extension.equals("jpg");
+        return extension.equals("JPEG");
     }
 
     public int getSize() {

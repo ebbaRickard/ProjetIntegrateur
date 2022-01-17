@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 public class GameView {
     public static int PADDING = 10;
     public static int LINEWIDTH_MEMORYCARD = 3;
-    public static int BOARDSIZE = 3;
+    public static int BOARDSIZE = 4;
 
     private JPanel frameBoard;
     private JFrame frame;
@@ -79,9 +79,10 @@ public class GameView {
         Graphics2D g2d = image.createGraphics();
         component.print(g2d);
         g2d.dispose();
+        System.out.println(System.getProperty("user.dir") + "/Detection/board.jpg");
         try {
             boolean result = ImageIO.write(image, "jpg",
-                    new File("../../../../../../board.jpg"));
+                    new File(System.getProperty("user.dir") + "\\board.jpg"));
             System.out.println(result);
         } catch (IOException e) {
             e.printStackTrace();

@@ -27,7 +27,7 @@ public class maintest {
 
     public static void main(String[] args) throws IOException {
         String folder = System.getProperty("user.dir");
-        String imagesRepo = folder + "/src/main/java/MemoryGame/model/data/test";
+        String imagesRepo = folder + "/imageNet";
         String backgroundImage = folder + "/src/main/java/MemoryGame/model/background.png";
         MemoryBoard mb = new MemoryBoard(GameView.BOARDSIZE, imagesRepo, backgroundImage);
         GameController gc = new GameController(mb);
@@ -37,7 +37,7 @@ public class maintest {
         ServerClass server = new ServerClass(gc);
 
         get("/hello", (req, res) -> "Hello World");
-        post("/turnPair/:pair", (req, res) -> server.turnPair(req, res, req.params(":pair")));
+        get("/turnPair/:pair", (req, res) -> server.turnPair(req, res, req.params(":pair")));
         get("/isPair/:pair", (req, res) -> server.isPair(req, res, req.params(":pair")));
         get("/getBoard", (req, res) -> server.getBoard(req, res));
 
@@ -53,6 +53,7 @@ class ServerClass {
     }
 
     public String turnPair(Request req, Response res, String pair) {
+        System.out.println("In turnpair");
         Integer[] pairs = parsePair(pair);
         System.out.println(pairs.toString());
         try {
@@ -67,8 +68,13 @@ class ServerClass {
 
     public String isPair(Request req, Response res, String pair) {
         Integer[] pairs = parsePair(pair);
-        gc.checkPair(pairs[0], pairs[1], pairs[2], pairs[3]);
-        return "";
+        boolean result = false;
+        try {
+            result = gc.checkPair(pairs[0], pairs[1], pairs[2], pairs[3]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Boolean.toString(result);
     }
 
     private Integer[] parsePair(String pair) {
@@ -85,9 +91,14 @@ class ServerClass {
     }
 
     public Response getBoard(Request req, Response res) {
-        String folder = System.getProperty("user.dir");
-        byte[] bytes = Files
-                .readAllBytes(Paths.get(folder.substring(0, folder.length() - 14) + "/Detection/board.jpg"));
+        byte[] bytes = null;
+        try {
+            bytes = Files
+                .readAllBytes(Paths.get(System.getProperty("user.dir") + "/board.jpg"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
 
         HttpServletResponse raw = res.raw();
         res.header("Content-Disposition", "attachment; filename=image.jpg");
