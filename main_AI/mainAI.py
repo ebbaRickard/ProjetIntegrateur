@@ -14,7 +14,7 @@ from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 
  # Create a Virtual board (no detection required)
-def tempCreateRandomBoard(nb_cards:int):
+def tempCreateRandomBoard(nb_cards:int,verbose=True):
     if(nb_cards%2!=0): # Check if the number of cards is even 
         raise Exception("Invalid number of cards (nb_cards={}), must be an even number".format(nb_cards))
     
@@ -50,12 +50,12 @@ def tempCreateRandomBoard(nb_cards:int):
 
     
     np.random.shuffle(board)
-    
-    print("Simulated board :\n")
-    print("index : class")
-    for i,card in enumerate(board): 
-        print("{} : {}".format(i,card['label']))
-    
+    if(verbose):
+        print("Simulated board :\n")
+        print("index : class")
+        for i,card in enumerate(board): 
+            print("{} : {}".format(i,card['label']))
+        
     return board, labels_name
 
 # Card classification status
@@ -79,13 +79,14 @@ class Card():
         self.status = Status.LABELED
 # AI
 class Main_AI():
-    def __init__(self,nb_cards:int,model_name:str="model_trained"):
+    def __init__(self,nb_cards:int,verbose=True):
         if(nb_cards%2!=0): # Check if the number of cards is even 
             raise Exception("Invalid number of cards (nb_cards={}), must be an even number".format(nb_cards))
         
         self.nb_cards = nb_cards
         self.memory=[Card(number) for number in range(nb_cards)]
-            
+        self.verbose = verbose
+
     def getListIndexUnknown(self): # Return List of unknown cards
         return [card.index for card in self.memory if(card.status==Status.UNKNOWN)]
     def getListIndexRemaining(self): # Return List of remaining cards
@@ -119,8 +120,9 @@ class Main_AI():
         self.cards_turned =  sorted(self.cards_turned)
 
         # TO REMOVE
-        plt.imshow(board[index_card_to_turn]['image'])
-        plt.show()
+        if self.verbose:
+            plt.imshow(board[index_card_to_turn]['image'])
+            plt.show()
 
         # TO ADD 
         # Sending to the game
@@ -181,7 +183,7 @@ class Main_AI():
         if(index1==-1): # No match yet > Choosing a random card
             return self.chooseRandomUnknownCard()
         else: # There is a possibility of a match
-            print("AI think that there is a match between {} and {}".format(index1,index2))
+            if self.verbose: print("AI think that there is a match between {} and {}".format(index1,index2))
             return index1
     
     # Logic for choosing the second card (possibility that no unknown card remaining)
@@ -195,7 +197,7 @@ class Main_AI():
             else: # Choosing a random labeled card
                 return self.chooseRandomLabeledCard()
         else: # There is a possibility of a match 
-            print("AI think that there is a match between {} and {}".format(index1,index2))
+            if self.verbose:print("AI think that there is a match between {} and {}".format(index1,index2))
             return index2
 
     def stepWhenImagesLabeled(self):
@@ -225,10 +227,10 @@ class Main_AI():
         classification_finished = (np.size(self.getListIndexUnknown()) == 0)
         step = 0
         
-        board,labels_name = tempCreateRandomBoard(self.nb_cards) # Create a random board
+        board,labels_name = tempCreateRandomBoard(self.nb_cards,verbose=self.verbose) # Create a random board
         last_card_turned = None
         while(not classification_finished): # Looping until there is no unknown card
-            print(f'\n\n---------------- Step {step} ----------------\n')
+            if self.verbose:print(f'\n\n---------------- Step {step} ----------------\n')
             self.cards_turned = []
             
             # --- FIRST CARD ---
@@ -242,7 +244,7 @@ class Main_AI():
 
             # Classify it 
             labels_predicted = self.classifyImages(images)
-            print("The prediction for the first card({}) is {}".format(index_card_to_turn_1,labels_predicted[0]))
+            if self.verbose:print("The prediction for the first card({}) is {}".format(index_card_to_turn_1,labels_predicted[0]))
 
             # --- SECOND CARD ---
 
@@ -256,7 +258,7 @@ class Main_AI():
             # Classify it 
             labels_predicted = self.classifyImages(images)
             
-            print("The prediction for cards({} and {}) are {} and {}\n".format(index_card_to_turn_1,index_card_to_turn_2,labels_predicted[0],labels_predicted[1]))
+            if self.verbose:print("The prediction for cards({} and {}) are {} and {}\n".format(index_card_to_turn_1,index_card_to_turn_2,labels_predicted[0],labels_predicted[1]))
 
             # --- CHECKER --- (check if the 2 cards are the same)
 
@@ -264,12 +266,12 @@ class Main_AI():
             if(self.check(board,index_card_to_turn_1,index_card_to_turn_2)):
                 self.memory[index_card_to_turn_1].status = Status.VALID
                 self.memory[index_card_to_turn_2].status = Status.VALID
-                print("Checker find that image are from same class\n")
+                if self.verbose:print("Checker find that image are from same class\n")
 
             # --- FINISHING STEP --- (update informations)
             step += 1
             classification_finished = (np.size(self.getListIndexUnknown()) == 0)
-            self.printCurrentMemory(board)
+            if self.verbose:self.printCurrentMemory(board)
             if(self.cards_turned==last_card_turned): # Fixing infinite loop problem (it never happens)
                 raise Exception("Error : Classification is looping into the same cards, interruption of the program... ")
             last_card_turned = self.cards_turned
@@ -279,35 +281,36 @@ class Main_AI():
 
             nb_images_remaining = np.size(list_index_remaining)-2
             steps_before = step
-            print("\n\n Classification went wrong, we have to search for new label for remaining UNVALID pictures ...")
-            print("Indexes remaining to correctly classify : ")
-            print(list_index_remaining)
-            print("\n\n")
+            if self.verbose:
+                print("\n\n Classification went wrong, we have to search for new label for remaining UNVALID pictures ...")
+                print("Indexes remaining to correctly classify : ")
+                print(list_index_remaining)
+                print("\n\n")
 
             finished = (np.size(list_index_remaining) == 0)
 
             while(not finished):
-                print(f'\n\n---------------- Step {step} ----------------\n')
+                if self.verbose:print(f'\n\n---------------- Step {step} ----------------\n')
 
                 if(np.size(list_index_remaining)==2): # It must be a pair
                     index_card_to_turn_1 = list_index_remaining[0]
                     index_card_to_turn_2 = list_index_remaining[1]
-                    print("Only 2 images remaining, must be the same")
+                    if self.verbose:print("Only 2 images remaining, must be the same")
                 else : # Try with predictions information (Improvement : try with other classifier)
                     index_card_to_turn_1,index_card_to_turn_2 = self.stepWhenImagesLabeled()
 
                 self.turnCard(index_card_to_turn_1,board)
                 self.turnCard(index_card_to_turn_2,board)
                 
-                print("Turning card {} and {}".format(index_card_to_turn_1,index_card_to_turn_2))
+                if self.verbose:print("Turning card {} and {}".format(index_card_to_turn_1,index_card_to_turn_2))
                 # Check if the cards have the same class
                 if(self.check(board,index_card_to_turn_1,index_card_to_turn_2)):
                     self.memory[index_card_to_turn_1].status = Status.VALID
                     self.memory[index_card_to_turn_2].status = Status.VALID
-                    print("\nChecker find that image are from same class")
+                    if self.verbose:print("\nChecker find that image are from same class")
 
                 # Update informations
-                self.printCurrentMemory(board)
+                if self.verbose:self.printCurrentMemory(board)
                 list_index_remaining = self.getListIndexRemaining()
                 finished = (np.size(list_index_remaining) == 0)
                 step+=1
@@ -315,7 +318,9 @@ class Main_AI():
             nb_images_remaining = 0
             steps_before = step
 
-        print("\n{} images correctly classified in {} steps \n(after it was random guess)\n".format(self.nb_cards-nb_images_remaining,steps_before))
+        if self.verbose:print("\n{} images correctly classified in {} steps \n(after it was random guess)\n".format(self.nb_cards-nb_images_remaining,steps_before))
     
-        print("\n\nGame finished in {} steps".format(step))    
+        if self.verbose:print("\n\nGame finished in {} steps".format(step))   
+	    
+        return(self.nb_cards-nb_images_remaining)
 
