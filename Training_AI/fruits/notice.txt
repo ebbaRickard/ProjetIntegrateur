@@ -1,0 +1,1 @@
+You have to download the fruits dataset and put into 2 directories, test and train, each file/image is labeled as apple_1.jpg
