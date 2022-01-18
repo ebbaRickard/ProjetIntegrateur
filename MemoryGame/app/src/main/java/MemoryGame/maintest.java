@@ -37,7 +37,7 @@ public class maintest {
         ServerClass server = new ServerClass(gc);
 
         get("/hello", (req, res) -> "Hello World");
-        get("/turnPair/:pair", (req, res) -> server.turnPair(req, res, req.params(":pair")));
+        get("/turnCard/:card", (req, res) -> server.turnCard(req, res, req.params(":card")));
         get("/isPair/:pair", (req, res) -> server.isPair(req, res, req.params(":pair")));
         get("/getBoard", (req, res) -> server.getBoard(req, res));
 
@@ -52,12 +52,11 @@ class ServerClass {
         this.gc = gc;
     }
 
-    public String turnPair(Request req, Response res, String pair) {
+    public String turnCard(Request req, Response res, String card) {
         System.out.println("In turnpair");
-        Integer[] pairs = parsePair(pair);
-        System.out.println(pairs.toString());
+        Integer[] cardIndexes = parseCard(card);
         try {
-            gc.turnPair(pairs[0], pairs[1], pairs[2], pairs[3]);
+            gc.turnCard(cardIndexes[0], cardIndexes[1]);
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -88,6 +87,17 @@ class ServerClass {
             e.printStackTrace();
         }
         return parsedPairs;
+    }
+
+    private Integer[] parseCard(String card) {
+        Integer[] parsedCards = new Integer[2];
+        try {
+            parsedCards[0] = Integer.parseInt(card.substring(0, 1));
+            parsedCards[1] = Integer.parseInt(card.substring(1, 2));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return parsedCards;
     }
 
     public Response getBoard(Request req, Response res) {

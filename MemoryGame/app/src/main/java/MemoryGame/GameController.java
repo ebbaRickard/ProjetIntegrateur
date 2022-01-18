@@ -22,11 +22,18 @@ public class GameController {
         gv.updateWindow(mb);
     }
 
+    public void turnCard(int r1, int c1) throws IOException {
+        if (!mb.isFlipped(r1, c1)) {
+            mb.flipCard(r1, c1);
+        }
+        gv.updateWindow(mb);
+    }
+
     // Called when the AI thinks it turned two cards that make a pair
     // If the AI doesn't think it is a pair, it just flips them back
     public boolean checkPair(int r1, int c1, int r2, int c2) throws IOException {
         // If not pair, flip back to tell AI that it was wrong
-        boolean isPair;
+        boolean isPair = true;
         if (!mb.isPair(r1, c1, r2, c2)) {
             if (mb.isFlipped(r1, c1)) {
                 mb.flipCard(r1, c1);
@@ -39,7 +46,6 @@ public class GameController {
         }
 
         gv.updateWindow(mb);
-        isPair = true;
 
         return isPair;
     }

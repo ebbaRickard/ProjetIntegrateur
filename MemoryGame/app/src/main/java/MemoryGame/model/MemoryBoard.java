@@ -47,10 +47,10 @@ public class MemoryBoard {
                                     count = 0;
                                     break;
                                 }
-                                System.out.println(file.getPath());
                                 MemoryImage img = new MemoryImage(file.getPath());
                                 board[r][c] = img;
-                                labels[r][c] = findLabel(file.getName());
+                                labels[r][c] = folder.getName();
+                                System.out.println(folder.getName());
 
                                 if (r < size - 1) {
                                     r++;
@@ -68,6 +68,7 @@ public class MemoryBoard {
         }
     }
 
+    // To find the labels in the fruit data set
     private String findLabel(String filepath) {
         return filepath.split("_")[0];
     }
@@ -102,6 +103,8 @@ public class MemoryBoard {
     }
 
     public boolean isPair(int r1, int c1, int r2, int c2) {
+        System.out.println(labels[r1][c1]);
+        System.out.println(labels[r2][c2]);
         return labels[r1][c1].equals(labels[r2][c2]);
     }
 
