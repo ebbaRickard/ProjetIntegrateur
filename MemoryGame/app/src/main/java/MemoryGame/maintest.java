@@ -73,6 +73,7 @@ class ServerClass {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        res.body(Boolean.toString(result));
         return Boolean.toString(result);
     }
 
